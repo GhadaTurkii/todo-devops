@@ -10,14 +10,18 @@ pipeline {
         
         stage('Build') {
             steps {
-               docker.build("ghada/todo-devops:${env.BUILD_NUMBER}")
+               script {
+                   docker.build("ghada/todo-devops:${env.BUILD_NUMBER}")
+               }
             }
         }
         
         stage('Push') {
             steps {
-                docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                    docker.image("ghada/todo-devops:${env.BUILD_NUMBER}").push()
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image("ghada/todo-devops:${env.BUILD_NUMBER}").push()
+                    }
                 }
             }
         }
@@ -29,5 +33,5 @@ pipeline {
             }
         }
         
-}
+    }
 }
