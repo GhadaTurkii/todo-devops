@@ -1,35 +1,33 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKER_CREDENTIALS = credentials('your_dockerhub_credentials_id')
-        KUBECONFIG = credentials('your_kubeconfig_credentials_id')
-    }
-
+    
     stages {
-        stage('Conteneurisation') {
+        stage('Checkout') {
             steps {
-                script {
-                    sh 'docker build -t your_image_name .'
+                git branch: 'main', url: 'https://github.com/GhadaTurkii/todo-devops.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+               docker.build("ghada/todo-devops:${env.BUILD_NUMBER}")
+            }
+        }
+        
+        stage('Push') {
+            steps {
+                docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                    docker.image("ghada/todo-devops:${env.BUILD_NUMBER}").push()
                 }
             }
         }
-        stage('Push vers DockerHub') {
+
+        stage('Deploy') {
             steps {
-                script {
-                    sh 'docker login -u your_dockerhub_username -p $DOCKER_PASSWORD'
-                    sh 'docker push your_image_name'
-                }
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
             }
         }
-        stage('Déploiement sur Kubernetes') {
-            steps {
-                script {
-                    sh 'kubectl apply -f deployment.yaml'
-                    sh 'kubectl expose deployment your_deployment_name --type=NodePort --port=80'
-                    sh 'kubectl get nodes -o wide'
-                }
-            }
-        }
-    }
+        
+}
 }
