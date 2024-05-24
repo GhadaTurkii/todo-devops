@@ -14,3 +14,9 @@ npm start
 # Build for production
 npm run build
 ```
+
+jenkins pipeline:
+![image](https://github.com/GhadaTurkii/todo-devops/assets/165965270/d8c3ba76-3ced-4007-bf0f-f1c06314e76b)
+![image](https://github.com/GhadaTurkii/todo-devops/assets/165965270/b725d915-af33-4a6a-9182-caba58db8e73)
+
+
